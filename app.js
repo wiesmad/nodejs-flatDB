@@ -2,8 +2,8 @@
 const express = require("express");
 const app = express();
 const userRouter = require('./routes/userRoutes');
-const AppError = require('./utils/appError')
-
+const errorHandler = require("./handlers/errorHandler");
+const AppError = require('./utils/appError');
 
 // register view engine
 app.set('view engine', 'ejs');
@@ -13,6 +13,7 @@ app.use(express.static("public"))
 
 // middleware to parse JSON request
 app.use(express.json());
+
 // middleware to decode data send from html form
 app.use(express.urlencoded({ extended: true }));
 
@@ -24,21 +25,22 @@ app.use((req, res, next) => {
 
 app.use('/users', userRouter);
 
-// 404 page
+// 404 error
 app.all('*', (req, res, next) => {
-  // res.status(404).render('404.ejs');
   next(new AppError(`Page '${req.originalUrl}' not found `, 404))
 });
 
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'erorr';
+// app.use((err, req, res, next) => {
+//   err.statusCode = err.statusCode || 500;
+//   err.status = err.status || 'erorr';
 
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-    stack: err.stack
-  })
-})
+//   res.status(err.statusCode).json({
+//     status: err.status,
+//     message: err.message,
+//     stack: err.stack
+//   });
+// });
+
+app.use(errorHandler);
 
 module.exports = app;

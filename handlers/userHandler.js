@@ -1,9 +1,10 @@
-const fs = require("fs");
-const AppError = require('../utils/appError');
+const fs = require('fs');
 const users = require('../data/users.json');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
 // save updated users.json file
-function updateFile() {
+function saveFile() {
   fs.writeFile("./data/users.json", JSON.stringify(users, null, 2), (err) => {
     if (err) {
       return next(new AppError('Can not update file', 500));
@@ -17,46 +18,38 @@ exports.checkBody = (req, res, next) => {
     next(new AppError('User name and email are required', 500));
   }
   next();
-
 };
 
 // middleware to check if user exists
 exports.checkUser = (req, res, next) => {
   const user = users.find(el => el.id == req.params.id);
   if (!user) {
-    next(new AppError(`Invalid user ID: '${req.params.id}''`, 500));
+    next(new AppError(`Invalid user ID: '${req.params.id}`, 500));
   }
   next();
-
-}
+};
 
 exports.getAllUsers = (req, res) => {
-  // res.status(200).render('index', { title: 'List of Users', users });
-  try {
-    res.status(200).json({
-      success: true,
-      count: users.length,
-      data: users.length > 0 ? users : null
-    });
-  } catch (err) {
-    throw new AppError('Can not read json file', 500);
-  }
+  if (!users)
+    return new AppError('Can not read json file!', 500);
+
+  res.status(200).json({
+    success: true,
+    count: users.length,
+    data: users.length > 0 ? users : null
+  });
 };
 
-exports.getUser = (req, res) => {
-  // res.render('user', { title: `Detail of user with ID ${user.id}`, user })
-  const user = users.find(el => el.id == req.params.id);
-  try {
-    res.status(200).json({
-      success: true,
-      data: user,
-    });
-  } catch (err) {
-    throw new AppError('Can not find user', 500);
-  }
-};
+exports.getUser = catchAsync(async (req, res) => {
+  const user = await users.find(el => el.id == req.params.id);
 
-exports.createUser = (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+exports.createUser = catchAsync((req, res) => {
   const user = {
     id: Math.random().toString(16).substring(2, 10),
     username: req.body.username,
@@ -74,58 +67,47 @@ exports.createUser = (req, res) => {
     users.push(user);
   }
 
-  updateFile();
+  saveFile();
 
-  try {
-    res.status(200).json({
-      success: true,
-      data: user,
-    });
-  } catch (err) {
-    throw new AppError('Can not create user', 500);
-  }
-};
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
 
 
-exports.updateUser = (req, res) => {
-  const user = users.find(el => el.id == req.params.id);
-  const index = users.findIndex(el => el.id == user.id);
+exports.updateUser = catchAsync(async (req, res) => {
+  const user = await users.find(el => el.id == req.params.id);
+  const index = await users.findIndex(el => el.id == user.id);
   const newUser = {
     id: user.id,
     username: req.body.username || user.username,
     email: req.body.email || user.email,
-    createdAt: user.createdAt
+    createdAt: user.createdAt,
+    updatedAt: new Date().toLocaleString()
   }
 
   if (index !== -1) {
     users[index] = newUser;
   }
 
-  updateFile();
+  saveFile();
 
-  try {
-    res.status(200).json({
-      success: true,
-      data: `User ${user.username} with ID '${user.id}' was updated`,
-    });
-  } catch (err) {
-    throw new AppError('Can not update user', 500);
-  }
-};
+  res.status(200).json({
+    success: true,
+    data: `User ${user.username} with ID '${user.id}' was updated`,
+  });
+});
 
-exports.deleteUser = async (req, res) => {
-  const user = users.find(el => el.id == req.params.id);
-  const index = users.findIndex(el => el.id == user.id);
+exports.deleteUser = catchAsync(async (req, res) => {
+  const user = await users.find(el => el.id == req.params.id);
+  const index = await users.findIndex(el => el.id == user.id);
   users.splice(index, 1);
 
-  updateFile();
+  saveFile();
 
-  try {
-    res.status(200).json({
-      success: true,
-      data: `User '${user.username}' with ID '${user.id}' was deleted`,
-    });
-  } catch (err) {
-    throw new AppError('Can not delete user', 500);
-  }
-};
+  res.status(200).json({
+    success: true,
+    data: `User '${user.username}' with ID '${user.id}' was deleted`,
+  });
+});
