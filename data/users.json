@@ -1,0 +1,26 @@
+[
+  {
+    "id": "24f8a7ed",
+    "username": "wes",
+    "email": "wes@gmail.com",
+    "createdAt": "23.06.2022, 21:14:35"
+  },
+  {
+    "id": "c131dea8",
+    "username": "ivo",
+    "email": "ivo@gmail.com",
+    "createdAt": "23.06.2022, 21:15:27"
+  },
+  {
+    "id": "97e8bbda",
+    "username": "asd",
+    "email": "asd@gmail.com",
+    "createdAt": "24.06.2022, 08:05:58"
+  },
+  {
+    "id": "1110a15f",
+    "username": "west",
+    "email": "asd@asd.com",
+    "createdAt": "24.06.2022, 20:10:22"
+  }
+]

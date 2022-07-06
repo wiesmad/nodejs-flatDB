@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users</title>
+</head>
+<body>
+
+  <div class="site-title">
+    <h1>Sample Users</h1>
+    <h2><%= title %></h2>
+    <a href="/users">All Users</a>
+    <div class="userCard">
+      <p>Username: <strong><%= user.username %></strong> </p>
+      <p>Email: <strong><%= user.email %></strong> </p>
+      <p>ID: <strong><%= user.id %></strong></p>
+      <p>Created: <strong><%= user.createdAt %></strong></p>
+      <img id="close" src="/images/close.png" alt="close icon">
+      
+    </div>
+
+  <script>
+    const close = document.getElementById('close');
+    const id = window.location.pathname;
+    document.addEventListener('click', ev => {
+      if (!ev.target.closest('#close')) return;
+      fetch(`${id}`, {
+        method: 'DELETE'
+      });
+    })
+  </script>
+
+  <style>
+    body {
+      display: grid;
+      grid-auto-flow: row;
+      background-color: gray;
+    }
+
+    h1 {
+      color: red;
+    }
+
+    .userCard {
+      position: relative;
+      width: 20%;
+      min-width: 200px;
+      padding: .5em 1em;
+      background: greenyellow;
+      border-radius: 10px;
+    }
+
+    #close {
+      position: absolute;
+      top: .8em;
+      right: .8em;
+      width: 1.2em;
+      border-radius: 50%;
+      padding: .1em;
+      transition: .4s ease;
+    }
+
+    #close:hover {
+      background-color: lightgray;
+    }
+
+    
+
+
+  </style>
+</body>
+</html>

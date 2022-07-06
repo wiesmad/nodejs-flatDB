@@ -1,0 +1,18 @@
+{
+  "name": "json-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "start:prod": "SET NODE_ENV=production&&nodemon server.js"
+  },
+  "keywords": [],
+  "author": "Wieslaw Mazurak <wmazurak@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.8",
+    "express": "^4.18.0"
+  }
+}
